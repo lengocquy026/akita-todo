@@ -1,0 +1,6 @@
+<select class="custom-select" [formControl]="control">
+  <option value="{{filter.value}}" *ngFor="let filter of list" [selected]="state === filter.value">
+    {{filter.label}}
+  </option>
+</select>
+

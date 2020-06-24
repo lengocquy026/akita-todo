@@ -1,0 +1,61 @@
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <a class="navbar-brand" href="#">
+    <fa name="clock-o"></fa>
+    TODOS</a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+          aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <div class="collapse navbar-collapse" id="navbarSupportedContent">
+    <ul class="navbar-nav mr-auto">
+      <li class="nav-item active">
+        <button class="btn btn-outline-secondary" (click)="toggle()">Toggle</button>
+      </li>
+      <li class="nav-item active ml-2">
+        <button class="btn btn-outline-secondary" (click)="toggleOrder()">
+          Order
+          <fa name="arrow-{{(currentOrder$ | async) == 'asc' ? 'down' : 'up'}}"></fa>
+        </button>
+      </li>
+      <li class="nav-item ml-2">
+        <app-todo-filter [list]="filters" [state]="currentFilter$ | async"
+                         (onChange)="onChangeFilter($event)"></app-todo-filter>
+      </li>
+    </ul>
+    <div class="form-inline my-2 my-lg-0">
+      <input class="form-control mr-sm-2" placeholder="Add Task..." type="text" [(ngModel)]="text"
+             (keydown.enter)="add(text)">
+      <button class="btn btn-success my-2 my-sm-0" (click)="add(text)" [disabled]="!text">ADD</button>
+    </div>
+  </div>
+</nav>
+
+<div class="mt-2 text-right">Count: {{count$ | async}} | Completed: {{completedCount$| async}}</div>
+
+<ul class="list-group mt-3">
+  <li class="list-group-item text-center" *ngIf="isLoading$ | async">Loading tasks ...</li>
+  <li class="list-group-item text-center" *ngIf="!(isLoading$ | async) && !(list$ | async).length">Empty list</li>
+
+  <li class="list-group-item" *ngFor="let todo of list$ | async;trackBy: trackByFn; let index = index"
+      (click)="complete(todo)">
+    <div class="row">
+      <div class="col-1">{{index + 1}}.</div>
+      <div class="col-1">
+        <div class="custom-control custom-switch">
+          <input type="checkbox" class="custom-control-input" id="switch1" [checked]="todo.completed">
+          <label class="custom-control-label" for="switch1"></label>
+        </div>
+      </div>
+      <div class="col">
+        <s *ngIf="todo.completed">{{todo.title}}</s>
+        <span *ngIf="!todo.completed">{{todo.title}}</span>
+      </div>
+      <div class="col-1">
+        <button type="button" class="btn btn-danger" (click)="delete(todo)">
+          <fa name="trash"></fa>
+        </button>
+      </div>
+    </div>
+  </li>
+</ul>
